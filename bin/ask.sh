@@ -22,6 +22,7 @@
 #   COUNCIL_GEMINI_BIN   default: gemini
 #   COUNCIL_GPT_BIN      default: codex
 #   COUNCIL_GEMINI_MODEL optional: passed to gemini --model
+#   COUNCIL_GPT_MODEL    optional: passed to codex -m
 #   COUNCIL_GPT_TIMEOUT  optional seconds (default 180), needs coreutils `timeout`/`gtimeout`
 #
 # Exit codes:
@@ -84,7 +85,10 @@ case "$PROVIDER" in
     # repo or working tree. The privacy boundary is enforced here, not just promised.
     WORKDIR="$(mktemp -d "${TMPDIR:-/tmp}/council_gptwd.XXXXXX")"
     trap 'rm -f "$TMPF"; rm -rf "$WORKDIR"' EXIT
-    ( cd "$WORKDIR" && timeout_cmd "$TO" "$BIN" exec --skip-git-repo-check -s read-only -o "$TMPF" "$PROMPT" ) >/dev/null 2>&1
+    ARGS=(exec --skip-git-repo-check -s read-only -o "$TMPF")
+    [[ -n "${COUNCIL_GPT_MODEL:-}" ]] && ARGS+=(-m "$COUNCIL_GPT_MODEL")
+    ARGS+=("$PROMPT")
+    ( cd "$WORKDIR" && timeout_cmd "$TO" "$BIN" "${ARGS[@]}" ) >/dev/null 2>&1
     rc=$?
     OUT="$(cat "$TMPF" 2>/dev/null)"
     if [[ $rc -ne 0 || -z "$OUT" ]]; then

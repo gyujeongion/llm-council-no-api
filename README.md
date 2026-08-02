@@ -118,6 +118,7 @@ All optional — override via environment variables:
 | `COUNCIL_GEMINI_BIN` | `gemini` | path/name of the Gemini CLI |
 | `COUNCIL_GPT_BIN` | `codex` | path/name of the GPT CLI |
 | `COUNCIL_GEMINI_MODEL` | — | passed to `gemini --model` |
+| `COUNCIL_GPT_MODEL` | — | passed to `codex -m` |
 | `COUNCIL_GPT_TIMEOUT` | `180` | seconds before a GPT call is abandoned |
 
 ---
